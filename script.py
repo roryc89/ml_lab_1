@@ -1,16 +1,16 @@
 import pandas as pd
 import re
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 orders = pd.read_csv("data/Orders.csv")
 orders.info()
+
 orders.Profit = pd.to_numeric(
-    orders.Profit.map(lambda x: re.sub("[\$\.,]", "", x))
+    orders.Profit.map(lambda x: re.sub("[$.,]", "", x))
 )
 
 orders.Sales = pd.to_numeric(
-    orders.Sales.map(lambda x: re.sub("[\$\.,]", "", x))
+    orders.Sales.map(lambda x: re.sub("[$.,]", "", x))
 )
 
 orders["date"] = pd.to_datetime(orders["Order.Date"]).dt.date
@@ -38,10 +38,6 @@ for cat in orders.Category.unique():
     plt.show()
 
 returns = pd.read_csv("data/Returns.csv")
-
-# returns[returns.Returned == "Yes"]
-# returns
-# orders[orders["Order.ID"] == "CA-2012-SA20830140-41210"]
 
 orders_and_returns = pd.merge(
     orders, returns, left_on="Order.ID", right_on="Order ID", how="left"
