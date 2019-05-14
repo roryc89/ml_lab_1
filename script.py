@@ -28,7 +28,6 @@ plt.xlabel("month")
 plt.ylabel("sales")
 plt.show()
 
-
 for cat in orders.Category.unique():
     cat_orders = orders[orders.Category == cat]
     sales_by_month = cat_orders.groupby(["month"]).agg({"Quantity": "sum"})
@@ -38,22 +37,38 @@ for cat in orders.Category.unique():
     plt.ylabel("sales of " + cat)
     plt.show()
 
-sales_by_category = orders.groupby(["Category", "month"]).agg(
-    {"Row.ID": "count"}
+returns = pd.read_csv("data/Returns.csv")
+
+# returns[returns.Returned == "Yes"]
+# returns
+# orders[orders["Order.ID"] == "CA-2012-SA20830140-41210"]
+
+orders_and_returns = pd.merge(
+    orders, returns, left_on="Order.ID", right_on="Order ID", how="left"
 )
-# tips = sns.load_dataset("tips")
-# g = sns.FacetGrid(tips, col="time", row="smoker")
-orders[orders.Category == "Furniture"]
 
-g = sns.FacetGrid(orders, col="Category", row="month")
-g = g.map(plt.bar, "Quantity")
-# counts.map(plt.hist)
+orders_and_returns.Returned = orders_and_returns.Returned == "Yes"
 
-# g = sns.FacetGrid(counts)
 
-# g = g.map(plt.hist, "year")
-# .unstack(1).plot(
-#     kind="bar", subplots=True
-# )
+orders_and_returns[orders_and_returns.Returned].groupby(["year"]).agg(
+    {"Profit": "sum"}
+)
 
-plt.show()
+orders_and_returns["id"] = orders_and_returns["Row.ID"]
+orders_and_returns.info()
+customer_returns = (
+    orders_and_returns[orders_and_returns.Returned]
+    .groupby(["Customer.ID"])
+    .agg({"id": "count"})
+)
+
+customer_returns[customer_returns.id > 1]
+customer_returns[customer_returns.id > 5]
+
+returns_by_region = (
+    orders_and_returns[orders_and_returns.Returned]
+    .groupby(["Region_y"])
+    .agg({"id": "count"})
+    .sort_values(by=["id"], ascending=False)
+)
+returns_by_region
