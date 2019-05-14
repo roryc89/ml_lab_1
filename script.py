@@ -20,26 +20,30 @@ orders["year"] = orders.date.map(lambda d: d.year)
 
 plt.figure(figsize=(32, 16))
 
-# orders.groupby(["year", "month"]).agg("count")["Row.ID"].barplot(
-#     kind="bar", subplots=True, orient="h"
-# )
 sales_by_month = orders.groupby(["month"]).agg({"Quantity": "sum"})
 
-
 plt.figure(figsize=(24, 12))
-plt.bar(sales_by_month.index, sales_by_month["Row.ID"])
+plt.bar(sales_by_month.index, sales_by_month.Quantity)
 plt.xlabel("month")
 plt.ylabel("sales")
 plt.show()
+
+
+for cat in orders.Category.unique():
+    cat_orders = orders[orders.Category == cat]
+    sales_by_month = cat_orders.groupby(["month"]).agg({"Quantity": "sum"})
+    plt.figure(figsize=(24, 12))
+    plt.bar(sales_by_month.index, sales_by_month.Quantity)
+    plt.xlabel("month")
+    plt.ylabel("sales of " + cat)
+    plt.show()
 
 sales_by_category = orders.groupby(["Category", "month"]).agg(
     {"Row.ID": "count"}
 )
 # tips = sns.load_dataset("tips")
 # g = sns.FacetGrid(tips, col="time", row="smoker")
-for
 orders[orders.Category == "Furniture"]
-
 
 g = sns.FacetGrid(orders, col="Category", row="month")
 g = g.map(plt.bar, "Quantity")
