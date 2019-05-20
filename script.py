@@ -52,6 +52,7 @@ orders_and_returns[orders_and_returns.Returned].groupby(["year"]).agg(
 
 orders_and_returns["id"] = orders_and_returns["Row.ID"]
 orders_and_returns.info()
+
 customer_returns = (
     orders_and_returns[orders_and_returns.Returned]
     .groupby(["Customer.ID"])
@@ -59,6 +60,7 @@ customer_returns = (
 )
 
 customer_returns[customer_returns.id > 1]
+
 customer_returns[customer_returns.id > 5]
 
 returns_by_region = (
@@ -67,4 +69,23 @@ returns_by_region = (
     .agg({"id": "count"})
     .sort_values(by=["id"], ascending=False)
 )
-returns_by_region
+
+orders_and_returns["Ship.Date"] = pd.to_datetime(
+    orders_and_returns["Ship.Date"]
+)
+orders_and_returns["Order.Date"] = pd.to_datetime(
+    orders_and_returns["Order.Date"]
+)
+
+orders_and_returns["process_time"] = (
+    orders_and_returns["Ship.Date"] - orders_and_returns["Order.Date"]
+)
+
+# returns_by_category = (
+#     orders_and_returns[orders_and_returns.Returned]
+#     .groupby(["Ca"])
+#     .agg({"id": "count"})
+#     .sort_values(by=["id"], ascending=False)
+# )
+#
+# returns_by_category
