@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
 
 orders = pd.read_csv("data/Orders.csv")
 orders.info()
@@ -80,6 +81,16 @@ orders_and_returns["Order.Date"] = pd.to_datetime(
 orders_and_returns["process_time"] = (
     orders_and_returns["Ship.Date"] - orders_and_returns["Order.Date"]
 )
+
+
+returns_by_product = orders_and_returns.groupby("Product.ID").agg(
+    {"Returned": "sum"}
+)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    returns_by_product, test_size=0.2
+)
+
 
 # returns_by_category = (
 #     orders_and_returns[orders_and_returns.Returned]
